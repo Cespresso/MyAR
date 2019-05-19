@@ -64,4 +64,20 @@ dependencies {
 
 
     implementation "com.google.ar.sceneform.ux:sceneform-ux:1.8.0"
+
+    /*Retrofit(APIインターファイス)Square*/
+    def retrofit_version = '2.5.0'
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+
+    /*Moshi (JSONパーサー)Square*/
+    def moshi_version = '1.8.0'
+    implementation "com.squareup.moshi:moshi:$moshi_version"
+    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
+
+    /*Okhttp (httpクライアント)Square*/
+    def okhttp_version = '3.13.1'
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
 }
