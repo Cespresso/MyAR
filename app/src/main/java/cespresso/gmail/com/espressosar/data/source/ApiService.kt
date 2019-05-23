@@ -18,7 +18,7 @@ class ApiService() {
         val retrofit = Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .baseUrl("https://espresso-dev-api.site")
+            .baseUrl("https://us-central1-arcore-sign.cloudfunctions.net")
             .client(httpBuilder().build())
             .build()
 

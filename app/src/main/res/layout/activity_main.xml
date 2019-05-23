@@ -5,10 +5,9 @@
                                              android:layout_height="match_parent"
                                              tools:context=".ui.main.MainActivity">
 
-    <fragment
+    <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/sceneform_fragment"
-            android:name="cespresso.gmail.com.espressosar.ui.main.MainARFragment" />
+            android:id="@+id/framelayout"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

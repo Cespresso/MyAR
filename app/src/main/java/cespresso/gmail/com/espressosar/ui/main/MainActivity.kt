@@ -5,8 +5,10 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import cespresso.gmail.com.espressosar.R
 import com.google.ar.core.*
 import com.google.ar.sceneform.AnchorNode
@@ -15,6 +17,7 @@ import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.Renderable
 import com.google.ar.sceneform.ux.ArFragment
 import com.google.ar.sceneform.ux.TransformableNode
+import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 
@@ -24,20 +27,35 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModel<MainViewModel>()
     private var arFragment: MainARFragment? = null
     private var shouldAddModel = true
+    public lateinit var frameLayout:FrameLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        arFragment = supportFragmentManager.findFragmentById(R.id.sceneform_fragment) as MainARFragment?
-        arFragment!!.planeDiscoveryController.hide()
-        arFragment!!.arSceneView.scene.addOnUpdateListener { this.onUpdateFrame(it) }
+        frameLayout = findViewById(R.id.framelayout)
+
+        viewModel.update.observe(this, Observer {
+            if(it){
+                val arFragment =  MainARFragment()
+                supportFragmentManager.beginTransaction().replace(R.id.framelayout,arFragment).commit()
+            }
+        })
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getData()
+    }
+
     fun setupAugmentedImageDb(config: Config, session: Session): Boolean {
-        viewModel.augmentedImageDatabase.value = AugmentedImageDatabase(session)
-        config.augmentedImageDatabase = viewModel.augmentedImageDatabase.value
+        val augmentedImageDatabase = AugmentedImageDatabase(session)
+        viewModel.imageMap.value?.forEach {
+            Log.e("^v^",it.key.name+"を追加したよ")
+            augmentedImageDatabase.addImage(it.key.name,it.value)
+        }
+        config.augmentedImageDatabase = augmentedImageDatabase
         return true
     }
 
@@ -51,13 +69,15 @@ class MainActivity : AppCompatActivity() {
         return null
     }
 
-    private fun onUpdateFrame(frameTime: FrameTime) {
+    fun onUpdateFrame(frameTime: FrameTime) {
         val frame = arFragment!!.arSceneView.arFrame
 
         val augmentedImages = frame!!.getUpdatedTrackables(AugmentedImage::class.java)
-
+        Log.e("^v^",augmentedImages.size.toString())
         for (augmentedImage in augmentedImages) {
+            Log.e("^v^",augmentedImage.name)
             if (augmentedImage.trackingState == TrackingState.TRACKING) {
+                Log.e("^v^",augmentedImage.name)
 
                 if (augmentedImage.name == "airplane" && shouldAddModel) {
                     placeObject(
