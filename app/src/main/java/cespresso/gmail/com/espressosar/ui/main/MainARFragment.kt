@@ -3,17 +3,21 @@ package cespresso.gmail.com.espressosar.ui.main
 import com.google.ar.sceneform.ux.ArFragment
 import com.google.a.b.a.a.a.e
 import android.R.attr.configure
+import android.graphics.Color
 import android.net.Uri
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.snackbar.Snackbar
 import com.google.ar.core.*
 import com.google.ar.core.Config.UpdateMode
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.FrameTime
+import com.google.ar.sceneform.Node
+import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.Renderable
 import com.google.ar.sceneform.rendering.ViewRenderable
@@ -53,13 +57,15 @@ class MainARFragment :ArFragment(){
             if (augmentedImage.trackingState == TrackingState.TRACKING) {
                 Log.e("^v^",augmentedImage.name)
 
-                if (augmentedImage.name == "airplane" && shouldAddModel) {
+                if (augmentedImage.name == "スターバックス" && shouldAddModel) {
 //                    placeObject(
 //                        this,
 //                        augmentedImage.createAnchor(augmentedImage.getCenterPose()),
 //                        Uri.parse("Airplane.sfb")
 //                    )
-                    placeText(this,augmentedImage.createAnchor(augmentedImage.centerPose),augmentedImage.name)
+                    val anchor = augmentedImage.createAnchor(augmentedImage.centerPose)//
+                    anchor
+                    placeText(this,anchor,"スターバックス")//Pose.makeTranslation(1.0,1.0,1.0)
 //                    placeWebView(this,augmentedImage.createAnchor(augmentedImage.centerPose),"https://www.google.com/")
                     shouldAddModel = false
                 }
@@ -85,15 +91,31 @@ class MainARFragment :ArFragment(){
 
     private fun addNodeToScene(fragment: ArFragment, anchor: Anchor, renderable: Renderable) {
         val anchorNode = AnchorNode(anchor)
-        val node = TransformableNode(fragment.transformationSystem)
+        //TransformableNodeこいつは変なUIがついてくる
+//        anchorNode.localPosition.z = anchorNode.localPosition.z+2.0f
+//        anchorNode.localPosition.x = anchorNode.localPosition.x+2.0f
+//        anchorNode.
+        val node = Node()
+//        node.translationController.
+//        transformationSystem.selectionVisualizer.removeSelectionVisual(node) // 本当は円を消したい
         node.renderable = renderable
+//        node.worldPosition.x = node.worldPosition.x+1
+        val position = node.localPosition
+        position.x += 0.1f
+//        position.z += 1.0f
+//        position.y += 1.0f
+//        node.localPosition = position
+        node.localPosition.y += 0.5f
+        node.localRotation = com.google.ar.sceneform.math.Quaternion.axisAngle(Vector3(1f,0f,0f),-90f)
         node.setParent(anchorNode)
+
         fragment.arSceneView.scene.addChild(anchorNode)
-        node.select()
+//        node.select()
     }
     private fun placeText(fragment: ArFragment, anchor: Anchor,text:String) {
         val textView = TextView(activity)
         textView.text = text
+        textView.setBackgroundColor(Color.WHITE)//ResourcesCompat.getColor()
         ViewRenderable.builder()
             .setView(activity, textView)
             .build()
