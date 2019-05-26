@@ -101,11 +101,11 @@ class MainARFragment :ArFragment(){
         node.renderable = renderable
 //        node.worldPosition.x = node.worldPosition.x+1
         val position = node.localPosition
-        position.x += 0.1f
+        position.z += -0.1f
 //        position.z += 1.0f
 //        position.y += 1.0f
 //        node.localPosition = position
-        node.localPosition.y += 0.5f
+        node.localPosition = position
         node.localRotation = com.google.ar.sceneform.math.Quaternion.axisAngle(Vector3(1f,0f,0f),-90f)
         node.setParent(anchorNode)
 
